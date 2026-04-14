@@ -3,51 +3,58 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
+// Notice: Removed the leading slash from the image paths
 const wondersData = [
   {
     id: "colosseum",
     name: "The Colosseum",
     location: "Rome, Italy",
     shortDesc: "An epic symbol of the Roman Empire's architectural prowess and engineering.",
+    image: "images/colosseum.jpeg" 
   },
   {
     id: "taj-mahal",
     name: "Taj Mahal",
     location: "Agra, India",
     shortDesc: "A breathtaking ivory-white marble mausoleum commissioned by Shah Jahan.",
+    image: "images/taj-mahal.jpg"
   },
   {
     id: "great-wall",
     name: "Great Wall of China",
     location: "China",
     shortDesc: "A series of ancient fortifications stretching across the historical northern borders.",
+    image: "images/great-wall.jpg"
   },
   {
     id: "petra",
     name: "Petra",
     location: "Ma'an, Jordan",
     shortDesc: "The Rose City, famous for its rock-cut architecture and water conduit system.",
+    image: "images/petra.jpg"
   },
   {
     id: "chichen-itza",
     name: "Chichén Itzá",
     location: "Yucatán, Mexico",
     shortDesc: "A massive step pyramid known as El Castillo, built by the Maya people.",
+    image: "images/chichen-itza.jpg"
   },
   {
     id: "machu-picchu",
     name: "Machu Picchu",
     location: "Cusco Region, Peru",
     shortDesc: "An Incan citadel set high in the Andes Mountains, built in the 15th century.",
+    image: "images/machu-picchu.jpg"
   },
   {
     id: "christ-redeemer",
     name: "Christ the Redeemer",
     location: "Rio de Janeiro, Brazil",
     shortDesc: "A colossal Art Deco statue of Jesus Christ created by Paul Landowski.",
+    image: "images/christ-redeemer.jpg"
   }
 ];
 
@@ -56,7 +63,6 @@ const Home = () => {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 1. Cinematic Text Reveal (Masking Effect)
       const tl = gsap.timeline();
       
       tl.fromTo(".mask-text", 
@@ -69,22 +75,21 @@ const Home = () => {
         "-=0.6"
       );
 
-      // 2. Scroll-Triggered Card Reveals
       gsap.utils.toArray('.wonder-card').forEach((card, i) => {
         gsap.fromTo(card, 
           { opacity: 0, y: 100, scale: 0.95 },
           {
             scrollTrigger: {
               trigger: card,
-              start: "top 85%", // Triggers when the top of the card hits 85% down the viewport
-              toggleActions: "play none none reverse", // Plays on enter, reverses on leave
+              start: "top 85%", 
+              toggleActions: "play none none reverse", 
             },
             opacity: 1,
             y: 0,
             scale: 1,
             duration: 0.8,
             ease: "power3.out",
-            delay: i % 3 * 0.1 // Slight stagger for grid rows
+            delay: i % 3 * 0.1 
           }
         );
       });
@@ -96,16 +101,13 @@ const Home = () => {
   return (
     <div ref={containerRef} className="relative min-h-screen pb-24 overflow-hidden">
       
-      {/* Ambient Background Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-white/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[20%] right-[-5%] w-[500px] h-[500px] bg-white/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
       
-      {/* Film Grain Overlay (Subtle noise texture using CSS radial gradient trick) */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, transparent 20%, #0a0a0a 120%)' }}></div>
 
       <div className="relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12 pt-20">
         
-        {/* Hero Section */}
         <div className="text-center mb-32 mt-10 flex flex-col items-center">
           <div className="overflow-hidden mb-2">
             <h1 className="mask-text text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-300 to-neutral-700 uppercase">
@@ -122,7 +124,6 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Wonders Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {wondersData.map((wonder) => (
             <Link 
@@ -130,18 +131,19 @@ const Home = () => {
               key={wonder.id}
               className="wonder-card group relative block h-[450px] overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 hover:border-white/30 transition-all duration-700 ease-in-out hover:shadow-[0_0_40px_rgba(255,255,255,0.05)]"
             >
-              {/* Image Layer Placeholder with intense scale effect */}
-              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full bg-neutral-900 group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center justify-center border border-dashed border-neutral-800/50">
-                   <span className="text-neutral-700 tracking-[0.3em] text-[10px] uppercase">Awaiting Visuals</span>
-                   <span className="text-neutral-600 font-bold mt-2">{wonder.id}.jpg</span>
-                </div>
+              
+              {/* VITE BASE URL INJECTION APPLIED HERE */}
+              <div className="absolute inset-0 bg-neutral-900 overflow-hidden">
+                <img 
+                  src={`${import.meta.env.BASE_URL}${wonder.image}`} 
+                  alt={wonder.name} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] opacity-80 group-hover:opacity-100"
+                  loading="lazy"
+                />
               </div>
 
-              {/* Dynamic Overlay Gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10 transition-opacity duration-700 group-hover:opacity-90"></div>
 
-              {/* Content Container */}
               <div className="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-6 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]">
                 <div className="overflow-hidden mb-2">
                   <p className="text-[10px] tracking-[0.3em] text-neutral-400 uppercase transform group-hover:text-white transition-colors duration-300">{wonder.location}</p>
@@ -155,7 +157,6 @@ const Home = () => {
                       {wonder.shortDesc}
                     </p>
                     
-                    {/* Professional Outro-style button */}
                     <div className="inline-flex items-center text-xs tracking-[0.2em] text-white uppercase border-b border-white/20 pb-1 group-hover:border-white transition-colors duration-500">
                       Uncover History 
                       <span className="ml-3 transform transition-transform duration-500 ease-out group-hover:translate-x-2">
